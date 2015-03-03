@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>data-channel-template</title>
+  <meta charset="UTF-8">
+  <style>canvas { width: 100%; height: 100% }</style>
+  <script src=https://webrtc.googlecode.com/svn-history/r4139/trunk/samples/js/base/adapter.js></script>
+  <script src=src/PeerConnection.js></script>
+</head>
+<body>
+  <div><button id="initialize-button">create offer</button></div>
+
+  <div><label for="info">state</label></br><textarea rows="5" cols="50" id="info" placeholder="connection state" readonly></textarea></div>
+  <div><label for="to-signaling-channel">send</label></br><textarea rows="10" cols="100" id="to-signaling-channel" placeholder="data from your app to signaling channel" readonly></textarea></div>
+  <div><label for="from-signaling-channel">receive</label></br><textarea rows="10" cols="100" id="from-signaling-channel" placeholder="data from signaling channel to be received by your app"></textarea></div>
+  <div><button id="reply-button">receive offer - create answer</button></div>
+  <div><label for="from-data-channel">received</label></br><textarea rows="5" cols="50" id="from-data-channel" placeholder="..." readonly></textarea></div>
+  <div><label for="to-data-channel">send</label></br><textarea rows="5" cols="50" id="to-data-channel" placeholder="..."></textarea></div>
+  <div><button id="send-button">send data</button></div>
+  <script>
+    var myConn; 
+
+    document.getElementById('initialize-button').onclick = function (event) {
+      if(!myConn) {
+        myConn = new PeerConnection();
+        myConn.offerConnection();
+        myConn.logState();
+      } else alert('PeerConnection already initialized!');
+    };
+    document.getElementById('reply-button').onclick = function (event) {
+      if(!myConn) myConn = new PeerConnection();
+      myConn.fakeSignal(document.getElementById("from-signaling-channel").value);
+      myConn.logState();
+    };
+    document.getElementById('send-button').onclick = function (event) {
+      if(myConn) myConn.dataChannel.send(document.getElementById("to-data-channel").value);
+    };
+
+  </script>
+
+</body>
+</html>
