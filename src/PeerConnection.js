@@ -5,27 +5,20 @@
  */
 var peerConnectionConfiguration  = {
 	'iceServers': [
-		{'url': 'stun:stun.l.google.com:19302'}
+		{url: 'stun:stun.l.google.com:19302'}
+		//,{url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'webrtc@live.com'}
 	]
 };
 
 /** 
  * @const 
  */
-var peerConnectionOptional  = {
-	optional: [{DtlsSrtpKeyAgreement: true}]
+var offerConfiguration =  {
+	offerToReceiveAudio: false, 
+	offerToReceiveVideo: false,
+	voiceActivityDetection: false,
+   	iceRestart: false
 };
-
-/** 
- * @const 
- */
-var mediaConstraints = {  
-		mandatory: {
-			OfferToReceiveAudio: false,
-			OfferToReceiveVideo: false
-		}
-};
-
 /** 
  * @const 
  */
@@ -39,13 +32,14 @@ var dataChannelConfiguration = {
  * @constructor
  */
 function PeerConnection(){
-	this.connection = new RTCPeerConnection(peerConnectionConfiguration, peerConnectionOptional);
+	this.connection = new RTCPeerConnection(peerConnectionConfiguration/*, peerConnectionOptional*/);
 	this.connection.signalingChannel = new SignalingChannel(this);
 	this.connection.isConnected = false;
+
 	this.connection.onicecandidate = function (evt) {
 		trace('--RTCPeerConnection.onicecandidate');
     	if (!this.isConnected) {
-	    	if (evt.target.iceGatheringState == 'complete') {  
+	    	if (this.iceGatheringState == 'complete') {  
 	    		trace('ICE candidates gathered, sending local description to peer');
 	   			this.signalingChannel.send(this.localDescription);	
 	   		}
@@ -55,11 +49,11 @@ function PeerConnection(){
     	}
 	};
 	this.connection.onnegotiationneeded = function (evt) {trace('--RTCPeerConnection.onnegotiationneeded');};
-	this.connection.onsignalingstatechange = function (evt) {trace('--RTCPeerConnection.onsignalingstatechange: ' + this.signalingState);};
+	this.connection.onsignalingstatechange = function (evt) {trace('--RTCPeerConnection.onsignalingstatechange: ' + this.signalingState );};
 	this.connection.onaddstream = function (evt) {trace('--RTCPeerConnection.onaddstream');};
 	this.connection.onremovestream = function (evt) {trace('--RTCPeerConnection.onremovestream');};
 	this.connection.oniceconnectionstatechange = function (evt) {trace('--RTCPeerConnection.oniceconnectionstatechange: ' + this.iceConnectionState);};
-	this.connection.onicegatheringstatechange = function (evt) {trace('--RTCPeerConnection.onicegatheringstatechange: ' + iceGatheringState);};
+	this.connection.onicegatheringstatechange = function (evt) {trace('--RTCPeerConnection.onicegatheringstatechange: ' + this.iceGatheringState);};
 
 	this.dataChannel = this.connection.createDataChannel('dc', dataChannelConfiguration);
 	this.dataChannel.connection = this.connection;
@@ -82,7 +76,7 @@ PeerConnection.prototype.offerConnection = function() {
 		trace('Creating offer SDP and setting as local description');
 		that.connection.setLocalDescription(offer, function(){
 		}, logError);
-	}, logError, mediaConstraints);
+	}, logError, offerConfiguration);
 };
 
 PeerConnection.prototype.addIceCandidate = function(sdp) {
@@ -99,7 +93,7 @@ PeerConnection.prototype.evaluateConnection = function(sdp) {
 				trace('Creating answer SDP and setting as local description');
 				that.connection.setLocalDescription(answer, function () {
         		}, logError);
-			}, logError, mediaConstraints);
+			}, logError);
 		}
    	}, logError);			
 };

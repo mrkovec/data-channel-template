@@ -9,13 +9,12 @@
 </head>
 <body>
   <div><button id="initialize-button">create offer</button></div>
-  <div><label for="to-signaling-channel">SDP (offer) to send to remote peer</label></br><textarea rows="10" cols="100" id="to-signaling-channel" placeholder="data from your app => signaling channel => remote peer" readonly></textarea></div>
-  <div><label for="from-signaling-channel">received SDP (answer) from remote peer</label></br><textarea rows="10" cols="100" id="from-signaling-channel" placeholder="data from peer => signaling channel => your app"></textarea></div>
+  <div><label for="to-signaling-channel">SDP (offer) to send to remote peer</label><br><textarea rows="10" cols="100" id="to-signaling-channel" placeholder="data from your app => signaling channel => remote peer" readonly></textarea></div>
+  <div><label for="from-signaling-channel">received SDP (answer) from remote peer</label><br><textarea rows="10" cols="100" id="from-signaling-channel" placeholder="data from peer => signaling channel => your app"></textarea></div>
   <div><button id="reply-button">receive answer</button></div>
-  <div><label for="from-data-channel">data chanel received</label></br><textarea rows="5" cols="50" id="from-data-channel" placeholder="..." readonly></textarea></div>
+  <div><label for="from-data-channel">data chanel received</label><br><textarea rows="5" cols="50" id="from-data-channel" placeholder="..." readonly></textarea></div>
   <script>
     var myConn; 
-
     document.getElementById('initialize-button').onclick = function (event) {
       if(!myConn) {
         myConn = new PeerConnection();
