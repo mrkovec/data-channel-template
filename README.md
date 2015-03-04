@@ -1,2 +1,3 @@
 # data-channel-template
-working WebRTC data channel teplate without the need of external signaling channel
+minimal WebRTC data channel with manual (ctrl+c / ctrl+v) signalling channel.
+don't forget to examine the javascript console.
